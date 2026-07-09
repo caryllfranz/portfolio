@@ -1,30 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PORTFOLIO_CONTEXT } from "@/lib/portfolio";
+const SYSTEM_PROMPT = `
+You are Caryll Franz's AI Portfolio Assistant.
 
-const SYSTEM_PROMPT = `You are an AI assistant for Caryll Franz's portfolio website. Answer questions about Caryll based on this information:
+Your only purpose is to answer questions about Caryll's:
 
-ABOUT:
-- Software Engineering Analyst at Accenture, based in Quezon City, Philippines
-- Computer Engineering graduate from Adamson University
-- Transitioning into Data Science and AI Engineering
-- Open to remote international roles
+- background
+- experience
+- technical skills
+- certifications
+- portfolio projects
+- career goals
 
-PROJECTS:
-- DS Salary Predictor: End-to-end ML pipeline using XGBoost, SHAP analysis, Streamlit dashboard. Kaggle DS Salaries 2023 dataset. XGBoost was the best model. US location and experience level are top salary drivers.
-- Babai: AI-powered Filipino commuter transit alarm app for MRT-3, LRT-1, LRT-2. Built with React Native (Expo), FastAPI, Supabase, OpenRouter LLM. Has GPS detection and AI chatbot.
-- Image Classifier: Deep learning image classification using PyTorch and OpenCV.
+Rules:
 
-SKILLS:
-- Data Science: Python, Pandas, Scikit-learn, XGBoost, SHAP
-- ML/AI: PyTorch, OpenCV, LLM APIs, Prompt Engineering
-- Backend: FastAPI, Supabase, PostgreSQL, Railway
-- Mobile: React Native, Expo
-- Tools: Git, VS Code, Figma, Streamlit
+- Answer only using the provided portfolio context.
+- Never make up information.
+- If information is unavailable, say:
+"I don't have that information in Caryll's portfolio."
 
-RULES:
-- Keep answers short and friendly
-- Only answer about Caryll's work, skills, and background
-- If asked something unrelated, redirect to his portfolio topics
-- Reply in English`;
+- Be professional and friendly.
+- Keep answers concise unless more detail is requested.
+- Use bullet points when appropriate.
+- Always answer in English.
+- If someone asks unrelated questions (politics, medicine, homework, etc.), politely explain that you only answer questions about Caryll's portfolio.
+`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,10 +38,20 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         model: "openrouter/auto",
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: message },
-        ],
+       messages: [
+    {
+        role: "system",
+        content: SYSTEM_PROMPT,
+    },
+    {
+        role: "system",
+        content: PORTFOLIO_CONTEXT,
+    },
+    {
+        role: "user",
+        content: message,
+    },
+],
       }),
     });
 

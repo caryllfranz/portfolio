@@ -47,7 +47,6 @@ const projects = [
     tags: [
       "Flutter",
       "Python",
-      "YOLOv5",
       "SQLite",
       "Arduino",
       "REST API",
@@ -66,7 +65,7 @@ const projects = [
       "SQL",
       "Excel",
     ],
-    link: "#",
+    link: null,
   },
   {
     num: "05",
@@ -80,7 +79,7 @@ const projects = [
       "Prompt Flow",
       "LLM",
     ],
-    link: "#",
+    link: null,
   },
   {
     num: "06",
@@ -93,7 +92,7 @@ const projects = [
       "Roboflow",
       "Google Colab",
     ],
-    link: "#",
+    link: null,
   },
 ];
 const skills = [
@@ -141,9 +140,9 @@ const experiences = [
     company: "Accenture",
     period: "2026 – Present",
     bullets: [
-      "Enhanced and maintain enterprise Java applications.",
-      "Collaborate with cross-functional teams to resolve incidents.",
-      "Automated reporting workflows using Python",
+      "Support and enhance enterprise Java applications in a production environment.",
+      "Analyze application issues, perform troubleshooting, and collaborate with cross-functional teams for incident resolution.",
+      "Develop Python-based automation scripts to streamline reporting workflows and reduce repetitive manual tasks.",
     ],
   },
   {
@@ -151,17 +150,19 @@ const experiences = [
     company: "Accenture",
     period: "2024 – 2025",
     bullets: [
-      "Maintained enterprise applications in a production environment.",
-      "Performed issue analysis and application support tasks.",
+      "Supported enterprise applications by performing monitoring, debugging, and issue resolution activities.",
+      "Worked with Java-based systems and application servers to investigate incidents and maintain system reliability.",
+      "Collaborated with development and support teams to deliver timely fixes and operational improvements.",
     ],
   },
   {
     role: "Web Developer Intern",
-    company: "Technomancer inc.",
-    period: "2024",
+    company: "Technomancer Inc.",
+    period: "2023",
     bullets: [
-      "Developed responsive web pages and application features.",
-      "Worked with HTML, CSS, JavaScript, PHP, Laravel framework and SQL.",
+      "Developed responsive web interfaces and application features using modern web technologies.",
+      "Built and maintained web components using HTML, CSS, JavaScript, PHP, and Laravel.",
+      "Worked with SQL databases to implement data handling and application functionality.",
     ],
   },
 ];
@@ -289,8 +290,8 @@ function ProjectCard({ p }: { p: typeof projects[0] & { private?: boolean; link:
             <span style={{ color: "var(--accent)" }}>$ </span>
             <span style={{ color: "var(--muted)" }}>git clone </span>
             <span style={{ color: "var(--foreground)" }}>
-              {p.private ? "..." : `github.com/caryllfranz/${p.link.split("/").pop()}`}
-            </span>
+  {p.link ? `github.com/caryllfranz/${p.link.split("/").pop()}` : ""}
+</span>
           </span>
           {!p.private && (
             <button onClick={copyClone} style={{
@@ -354,8 +355,8 @@ function ProjectCard({ p }: { p: typeof projects[0] & { private?: boolean; link:
         
 
         {/* Links */}
-        <div style={{ marginTop: "12px" }}>
-  {!p.private && (
+<div style={{ marginTop: "12px" }}>
+  {p.link && (
     <a
       href={p.link}
       target="_blank"
@@ -389,7 +390,32 @@ export default function Home() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatHover, setChatHover] = useState(false);
 
-  const sendSuggestedPrompt = async (prompt: string) => {
+const sendSuggestedPrompt = async (prompt: string) => {
+
+  if (prompt === "Download your CV") {
+    const link = document.createElement("a");
+    link.href = "/caryll_cv.pdf";
+    link.download = "Caryll_Franz_CV.pdf";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        role: "user",
+        text: prompt,
+      },
+      {
+        role: "assistant",
+        text: "Sure! Your CV download has started.",
+      },
+    ]);
+
+    return;
+  }
+
+
   setMessages((prev) => [...prev, { role: "user", text: prompt }]);
   setLoading(true);
 
@@ -423,7 +449,6 @@ export default function Home() {
     setLoading(false);
   }
 };
-
   const sendMessage = async () => {
     if (!input.trim()) return;
     const userMsg = { role: "user", text: input };
@@ -581,12 +606,13 @@ export default function Home() {
 
   {[
     ["name", '"Caryll Franz M. Cariño"'],
-    ["role", '"Software Engineer"'],
 
     ["transition", '"AI • Machine Learning • Data Science"'],
     ["location", '"Philippines"'],
     ["status", '"Open to Remote Opportunities"'],
     ["Currently", '"Software Analyst @ Accenture"'],
+    ["Education", '"BS Computer Engineering ~ Adamson University"'],
+    
   ].map(([key, value]) => (
     <div
       key={key}
@@ -639,11 +665,13 @@ export default function Home() {
                 padding: "8px 18px", background: "var(--accent)", color: "#fff",
                 borderRadius: "5px", fontSize: "12px", fontWeight: 700, textDecoration: "none"
               }}>./view_projects</a>
-              <a href="/cv.pdf" target="_blank" style={{
-                padding: "8px 18px", color: "var(--accent)",
-                border: "0.5px solid var(--accent)", borderRadius: "5px",
-                fontSize: "12px", fontWeight: 500, textDecoration: "none"
-              }}>download_cv</a>
+              <a href="/caryll_cv.pdf" download style={{
+  padding: "8px 18px", color: "var(--accent)",
+  border: "0.5px solid var(--accent)", borderRadius: "5px",
+  fontSize: "12px", fontWeight: 500, textDecoration: "none"
+}}>
+  download_cv
+</a>
             </div>
             <div style={{ display: "flex", gap: "28px" }}>
               {[
@@ -1192,9 +1220,9 @@ animation: "pulse 1s infinite"
     }}
   >
     {[
-      "Tell me about your projects",
-      "What tech stack do you use?",
       "Download your CV",
+      "What tech stack do you use?",
+      "What projects do you have?",
     ].map((prompt) => (
       <button
   key={prompt}
