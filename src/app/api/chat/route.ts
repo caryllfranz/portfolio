@@ -24,6 +24,13 @@ Rules:
 - Use bullet points when appropriate.
 - Always answer in English.
 - If someone asks unrelated questions (politics, medicine, homework, etc.), politely explain that you only answer questions about Caryll's portfolio.
+
+
+SPECIAL ACTIONS:
+- If the user asks to download the resume or CV, respond ONLY with:
+DOWNLOAD_RESUME
+
+
 `;
 
 export async function POST(req: NextRequest) {

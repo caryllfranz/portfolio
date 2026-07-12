@@ -479,16 +479,17 @@ const sendSuggestedPrompt = async (prompt: string) => {
         background: "var(--card)", border: "0.5px solid var(--border)",
         borderRadius: "10px", padding: "12px 20px", marginBottom: "48px"
       }}>
-        <span style={{ color: "var(--accent)", fontWeight: 700, fontSize: "13px" }}>
+        <span className="nav-logo-text" style={{ color: "var(--accent)", fontWeight: 700, fontSize: "13px" }}>
           caryll_franz<span style={{ color: "var(--muted-light)" }}>.py</span>
         </span>
-        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
+        <div className="nav-links-desktop" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           {["about", "projects", "skills", "ask_me","certificates", "contact"].map((link) => {
   if (link === "ask_me") {
     return (
       <button
         key={link}
         onClick={() => setChatOpen(true)}
+        className="nav-link-item"
         style={{
           background: "transparent",
           border: "none",
@@ -509,6 +510,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
     <a
       key={link}
       href={`#${link}`}
+      className="nav-link-item"
       style={{
         color: "var(--muted-light)",
         fontSize: "11px",
@@ -520,7 +522,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
     </a>
   );
 })}
-          <span style={{
+          <span className="nav-badge-item" style={{
             fontSize: "10px", fontWeight: 700,
             background: "var(--accent)", color: "#fff",
             borderRadius: "20px", padding: "3px 10px"
@@ -531,7 +533,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
 
       {/* HERO */}
       <section id="about" style={{ marginBottom: "64px" }}>
-        <div style={{ 
+        <div className="hero-row" style={{ 
   display: "flex", 
   justifyContent: "space-between", 
   alignItems: "center", 
@@ -542,7 +544,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
             <p style={{ fontSize: "11px", color: "var(--muted-light)", marginBottom: "12px" }}>
               <span style={{ color: "var(--accent)" }}>~/portfolio</span> $ whoami
             </p>
-            <h1 style={{
+            <h1 className="hero-title" style={{
               fontSize: "52px", fontWeight: 800, letterSpacing: "-2px",
               lineHeight: 1.05, marginBottom: "12px", color: "var(--foreground)"
             }}>
@@ -553,6 +555,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
               <TypingAnimation />
             </div>
            <div
+  className="about-terminal"
   style={{
     background: "var(--card)",
     border: "0.5px solid var(--border)",
@@ -660,7 +663,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
   </div>
 </div>
 </div>
-            <div style={{ display: "flex", gap: "8px", marginBottom: "28px" }}>
+            <div className="hero-btns-row" style={{ display: "flex", gap: "8px", marginBottom: "28px" }}>
               <a href="#projects" style={{
                 padding: "8px 18px", background: "var(--accent)", color: "#fff",
                 borderRadius: "5px", fontSize: "12px", fontWeight: 700, textDecoration: "none"
@@ -673,7 +676,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
   download_cv
 </a>
             </div>
-            <div style={{ display: "flex", gap: "28px" }}>
+            <div className="stats-row" style={{ display: "flex", gap: "28px" }}>
               {[
                 { num: "4", suffix: "+", label: "// projects" },
                 { num: "2", suffix: "+", label: "// years exp" },
@@ -691,11 +694,11 @@ const sendSuggestedPrompt = async (prompt: string) => {
 
           {/* AVATAR */}
           <div style={{ position: "relative", flexShrink: 0 }}>
-            <div style={{
+            <div className="avatar-ring" style={{
               position: "absolute", inset: "-12px", borderRadius: "36px",
               border: "1px solid var(--accent)", opacity: 0.2
             }} />
-            <div style={{
+            <div className="avatar-box" style={{
               width: 200, height: 280, borderRadius: "30px",
               overflow: "hidden", border: "2px solid var(--accent)",
               position: "relative", boxShadow: "0 20px 60px rgba(0,0,0,.15)"
@@ -883,7 +886,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
           <span style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "2px", color: "var(--accent)" }}>PROJECTS</span>
           <div style={{ flex: 1, height: "0.5px", background: "var(--border)" }} />
         </div>
-        <div style={{ 
+        <div className="projects-grid" style={{ 
   display: "grid", 
   gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
   gap: "10px" 
@@ -940,7 +943,6 @@ const sendSuggestedPrompt = async (prompt: string) => {
         </div>
       </section>
 {/* CERTIFICATES */}
-{/* CERTIFICATES */}
 <section id="certificates" style={{ marginBottom: "48px" }}>
   <div
     style={{
@@ -971,6 +973,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
   </div>
 
   <div
+    className="certs-grid"
     style={{
       display: "grid",
       gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
@@ -1056,7 +1059,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
           <p style={{ fontSize: "12px", color: "var(--muted)", lineHeight: 1.8, marginBottom: "24px" }}>
             Open to data science, ML, and AI engineering roles.<br />Remote preferred. Based in the Philippines.
           </p>
-          <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
+          <div style={{ display: "flex", gap: "8px", justifyContent: "center", flexWrap: "wrap" }}>
             <a href="mailto:caryllcarino@gmail.com" style={{
               display: "flex", alignItems: "center", gap: "6px",
               padding: "9px 18px", background: "var(--accent)", color: "#fff",
@@ -1082,12 +1085,13 @@ const sendSuggestedPrompt = async (prompt: string) => {
 
       
 {/* FLOATING CHAT */}
-<div style={{ position: "fixed", bottom: "24px", right: "24px", zIndex: 50 }}>
+<div className="chat-fab-wrap" style={{ position: "fixed", bottom: "24px", right: "24px", zIndex: 50 }}>
   {!chatOpen ? (
     <button
   onClick={() => setChatOpen(true)}
   onMouseEnter={() => setChatHover(true)}
   onMouseLeave={() => setChatHover(false)}
+  className="chat-fab"
   style={{
     display: "flex",
     alignItems: "center",
@@ -1113,6 +1117,7 @@ const sendSuggestedPrompt = async (prompt: string) => {
 </button>
   ) : (
     <div
+  className="chat-window"
   style={{
     width: "min(560px, calc(100vw - 40px))",
 height: "min(720px, calc(100vh - 40px))",

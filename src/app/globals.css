@@ -93,3 +93,100 @@ html {
 html{
 scroll-behavior:smooth;
 }
+
+/* Mobile responsive */
+.hero-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap-reverse;
+}
+
+.avatar-box {
+  width: 200px;
+  height: 280px;
+}
+
+.nav-links-desktop {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-logo-text {
+  font-size: 13px;
+}
+
+.hero-title {
+  font-size: 52px;
+}
+
+.stats-row {
+  display: flex;
+  gap: 28px;
+}
+
+@media (max-width: 640px) {
+  main {
+    padding: 12px 12px 32px !important;
+  }
+
+  .hero-row {
+    justify-content: center;
+    text-align: center;
+    gap: 20px;
+  }
+
+  .hero-row > div:first-child {
+    width: 100%;
+  }
+
+  .avatar-box {
+    width: 140px !important;
+    height: 190px !important;
+  }
+
+  .hero-title {
+    font-size: 34px !important;
+  }
+
+  .nav-links-desktop {
+    gap: 10px !important;
+  }
+
+  .nav-link-item {
+    display: none !important;
+  }
+
+  .nav-badge-item {
+    font-size: 9px !important;
+    padding: 3px 8px !important;
+  }
+
+  .stats-row {
+    justify-content: center;
+    gap: 18px !important;
+  }
+
+  .hero-btns-row {
+    justify-content: center;
+  }
+
+  .about-terminal {
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-window {
+    width: calc(100vw - 24px) !important;
+    height: calc(100vh - 100px) !important;
+    right: -12px !important;
+  }
+
+  .chat-fab {
+    padding: 10px 14px !important;
+    font-size: 11px !important;
+  }
+}
