@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "agentrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "AgentRouter (OpenAI Compatible)",
+      "options": {
+        "baseURL": "https://agentrouter.org/v1",
+        "apiKey": "sk-Ta0v9YIy0wV9MRXMMO12ILGRfA8FcywDGES5mnxMHvtPfyeP"
+      },
+      "models": {
+        "gpt-5.5": {
+          "name": "gpt-5.5"
+        }
+      }
+    }
+  },
+  "model": "agentrouter/gpt-5.5"
+}
+

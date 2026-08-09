@@ -1,192 +1,193 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* ------------------------------------------------------------------
+   Tokens
+
+   Strictly achromatic: every color is zero-chroma, so nothing reads as
+   a hue. Emphasis comes from luminance and border weight alone, which
+   is what makes the shadcn/Vercel/Linear family feel quiet.
+
+   Dark is the primary theme and anchors at pure black. Light is kept
+   for the toggle and mirrors the same neutral ramp.
+
+   Two tokens exist for the bento grid specifically:
+   --card-hover and --border-strong. Tiles shift between the resting
+   and hover pair — a luminance step, never a glow.
+------------------------------------------------------------------- */
+
 :root {
-  --background: #fafafa;
-  --foreground: #111111;
-  --accent: #e86b00;
-  --accent-light: #fff8f3;
-  --accent-border: #ffd4b3;
-  --muted: #888888;
-  --muted-light: #cccccc;
-  --border: #e8e8e8;
-  --card: #ffffff;
-  --grid-color: rgba(0, 0, 0, 0.03);
-  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 0.75rem;
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.16 0 0);
+
+  --card: oklch(0.988 0 0);
+  --card-foreground: oklch(0.16 0 0);
+  --card-hover: oklch(0.968 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0 0);
+
+  --primary: oklch(0.16 0 0);
+  --primary-foreground: oklch(1 0 0);
+
+  --secondary: oklch(0.968 0 0);
+  --secondary-foreground: oklch(0.16 0 0);
+
+  --muted: oklch(0.972 0 0);
+  --muted-foreground: oklch(0.492 0 0);
+
+  --accent: oklch(0.968 0 0);
+  --accent-foreground: oklch(0.16 0 0);
+
+  --destructive: oklch(0.577 0.245 27.325);
+
+  --border: oklch(0.918 0 0);
+  --border-strong: oklch(0.83 0 0);
+  --input: oklch(0.918 0 0);
+  --ring: oklch(0.62 0 0);
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ffffff;
-  --accent: #e86b00;
-  --accent-light: #1a0f00;
-  --accent-border: #3a2000;
-  --muted: #666666;
-  --muted-light: #333333;
-  --border: #1a1a1a;
-  --card: #0f0f0f;
-  --grid-color: rgba(255, 255, 255, 0.025);
+  /* Pure black ground. Surfaces step up from it rather than down. */
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.973 0 0);
+
+  --card: oklch(0.19 0 0);
+  --card-foreground: oklch(0.973 0 0);
+  --card-hover: oklch(0.24 0 0);
+  --popover: oklch(0.19 0 0);
+  --popover-foreground: oklch(0.973 0 0);
+
+  --primary: oklch(0.973 0 0);
+  --primary-foreground: oklch(0 0 0);
+
+  --secondary: oklch(0.24 0 0);
+  --secondary-foreground: oklch(0.973 0 0);
+
+  --muted: oklch(0.19 0 0);
+  /* 7.2:1 on pure black — comfortably past AA for body text. */
+  --muted-foreground: oklch(0.678 0 0);
+
+  --accent: oklch(0.24 0 0);
+  --accent-foreground: oklch(0.973 0 0);
+
+  --destructive: oklch(0.704 0.191 22.216);
+
+  /* Resting border reads as a hairline; -strong is the hover/focus step. */
+  --border: oklch(0.28 0 0);
+  --border-strong: oklch(0.4 0 0);
+  --input: oklch(0.3 0 0);
+  --ring: oklch(0.62 0 0);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-hover: var(--card-hover);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
-body {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  background-color: var(--background);
-  color: var(--foreground);
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in oklch, var(--foreground) 18%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Utilities
+------------------------------------------------------------------- */
+
+@utility label {
   font-family: var(--font-mono);
-  background-image:
-    linear-gradient(var(--grid-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
-  background-size: 32px 32px;
-  min-height: 100vh;
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-#__next,
-main {
-  width: 100%;
+/* Section entrance. Base state is hidden only when JS can restore it;
+   the no-JS fallback in <head> and reduced-motion both force visible. */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-::selection {
-  background: var(--accent);
-  color: white;
+.reveal[data-visible="true"] {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-@keyframes glow {
-  0% {
-    box-shadow: 0 6px 18px rgba(232,107,0,.20);
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 
-  50% {
-    box-shadow: 0 12px 30px rgba(232,107,0,.35);
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 
-  100% {
-    box-shadow: 0 6px 18px rgba(232,107,0,.20);
-  }
-}
-
-@keyframes blink {
-  50% {
-    opacity: 0;
-  }
-}
-
-
-@media (max-width: 768px) {
-  main {
-    padding: 16px 16px 48px !important;
-  }
-}
-
-html{
-scroll-behavior:smooth;
-}
-
-/* Mobile responsive */
-.hero-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap-reverse;
-}
-
-.avatar-box {
-  width: 200px;
-  height: 280px;
-}
-
-.nav-links-desktop {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.nav-logo-text {
-  font-size: 13px;
-}
-
-.hero-title {
-  font-size: 52px;
-}
-
-.stats-row {
-  display: flex;
-  gap: 28px;
-}
-
-@media (max-width: 640px) {
-  main {
-    padding: 12px 12px 32px !important;
-  }
-
-  .hero-row {
-    justify-content: center;
-    text-align: center;
-    gap: 20px;
-  }
-
-  .hero-row > div:first-child {
-    width: 100%;
-  }
-
-  .avatar-box {
-    width: 140px !important;
-    height: 190px !important;
-  }
-
-  .hero-title {
-    font-size: 34px !important;
-  }
-
-  .nav-links-desktop {
-    gap: 10px !important;
-  }
-
-  .nav-link-item {
-    display: none !important;
-  }
-
-  .nav-badge-item {
-    font-size: 9px !important;
-    padding: 3px 8px !important;
-  }
-
-  .stats-row {
-    justify-content: center;
-    gap: 18px !important;
-  }
-
-  .hero-btns-row {
-    justify-content: center;
-  }
-
-  .about-terminal {
-    max-width: 100% !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .chat-window {
-    width: calc(100vw - 24px) !important;
-    height: calc(100vh - 100px) !important;
-    right: -12px !important;
-  }
-
-  .chat-fab {
-    padding: 10px 14px !important;
-    font-size: 11px !important;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

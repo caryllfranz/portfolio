@@ -1,142 +1,91 @@
-export const PORTFOLIO_CONTEXT = `
-## About
+import {
+  about,
+  certifications,
+  education,
+  experience,
+  focusAreas,
+  profile,
+  projects,
+  skillGroups,
+  workflowStages,
+} from "@/lib/content";
 
-Software Engineering Analyst at Accenture (Philippines)
+/**
+ * Derived from the same content module the site renders, so the assistant
+ * can never describe a version of the portfolio that isn't on screen.
+ */
+function buildContext(): string {
+  const lines: string[] = [];
 
-Computer Engineering graduate from Adamson University.
+  lines.push("## Positioning");
+  lines.push(profile.name + " - " + profile.disciplines.join(" / "));
+  lines.push(profile.headline);
+  lines.push(profile.summary);
+  lines.push("Location: " + profile.location);
+  lines.push("Availability: " + profile.availability);
+  lines.push("Current role: " + profile.currentRole);
+  lines.push(
+    "Education: " +
+      education.degree +
+      ", " +
+      education.institution +
+      " (" +
+      education.period +
+      ")",
+  );
+  lines.push("Email: " + profile.email);
+  lines.push("GitHub: " + profile.github);
+  lines.push("LinkedIn: " + profile.linkedin);
 
-Interested in AI Engineering, Data Science, and Data Engineering.
+  lines.push("\n## About");
+  lines.push(about.paragraphs.join("\n\n"));
+  lines.push("How he frames his work: " + about.pipeline.join(" -> "));
 
-Open to remote international opportunities.
+  lines.push("\n## Workflow");
+  for (const s of workflowStages) {
+    lines.push("- " + s.label + ": " + s.note);
+  }
 
-## Experience
+  lines.push("\n## Projects");
+  for (const p of projects) {
+    lines.push("### " + p.name + " (" + p.kind + ", " + p.year + ")");
+    lines.push("Problem: " + p.problem);
+    lines.push("Approach: " + p.solution);
+    lines.push("Data: " + p.data);
+    lines.push("Method: " + p.method);
+    lines.push("Architecture: " + p.architecture.join(" -> "));
+    lines.push("Contribution: " + p.contribution);
+    lines.push("Stack: " + p.stack.join(", "));
+    lines.push("Results: " + p.results.join("; "));
+    lines.push("GitHub: " + (p.github ?? "not public"));
+    lines.push("Live demo: " + (p.demo ?? "none"));
+    lines.push("");
+  }
 
-Accenture
+  lines.push("## Experience");
+  for (const e of experience) {
+    lines.push(
+      "### " + e.role + " - " + e.company + " (" + e.period + ", " + e.location + ")",
+    );
+    for (const b of e.bullets) lines.push("- " + b);
+    lines.push("");
+  }
 
-Software Engineering Analyst
-- Develops Python scripts for SQL reporting automation.
-- Maintains enterprise Java applications.
-- Builds Power Automate workflows.
+  lines.push("## Technical skills");
+  for (const g of skillGroups) {
+    lines.push(g.title + ": " + g.items.join(", "));
+  }
+  lines.push(
+    "Note: he is positioned as an AI / Data / Machine Learning engineer. Frontend work (Next.js, React Native) supports the systems he builds rather than defining his role.",
+  );
 
-Associate Software Engineer
-- Completed Full Stack Java training.
-- Maintains enterprise applications using ServiceNow.
+  lines.push("\n## Currently focused on");
+  for (const f of focusAreas) lines.push("- " + f);
 
-Techomancer Inc.
-Web Developer Intern
-- PHP
-- Laravel
-- MySQL
-- JavaScript
-- HTML
-- CSS
+  lines.push("\n## Certifications");
+  for (const c of certifications) lines.push("- " + c.name + " (" + c.issuer + ")");
 
-## Projects
+  return lines.join("\n");
+}
 
-### BabAI
-
-Stack
-- React Native
-- Expo
-- FastAPI
-- Supabase
-- PostgreSQL
-- OpenRouter API
-
-Features
-- GPS station detection
-- MRT/LRT destination alarm
-- AI chatbot
-- Filipino commuter assistant
-
-GitHub
-https://github.com/caryllfranz/babAI
-
----
-
-### DS Salary Predictor
-
-Stack
-- Python
-- Pandas
-- Scikit-learn
-- XGBoost
-- SHAP
-- Streamlit
-
-Highlights
-- End-to-end ML pipeline
-- Feature engineering
-- Model evaluation
-- SHAP explainability
-
-GitHub
-https://github.com/caryllfranz/ds-salary-predictor
-
----
-
-### SpotSecure
-
-Bachelor's thesis.
-
-Stack
-- Flutter
-- Python
-- Raspberry Pi
-- Plate Recognizer API
-- REST API
-
-Features
-- Parking reservation
-- License plate recognition
-- IoT integration
-
-GitHub
-https://github.com/caryllfranz/LPR
-
-## Skills
-
-Languages
-- Python
-- SQL
-- Java
-- JavaScript
-
-Frameworks
-- FastAPI
-- Spring Boot
-- React Native
-
-Databases
-- PostgreSQL
-- MySQL
-- Supabase
-
-AI
-- Azure OpenAI
-- OpenRouter API
-- Prompt Engineering
-- XGBoost
-- SHAP
-- PyTorch
-- OpenCV
-- RAG
-
-Cloud
-- Azure
-- Railway
-- Docker
-
-Tools
-- Git
-- Streamlit
-- VS Code
-- Figma
-
-## Certifications
-
-- Claude 101
-- Cisco Data Analytics Essentials
-- Intermediate Python (DataCamp)
-- Python & Advanced SQL (Kaggle)
-`;
+export const PORTFOLIO_CONTEXT = buildContext();
