@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { profile } from "@/lib/content";
@@ -65,6 +65,22 @@ export const metadata: Metadata = {
     follow: true,
   },
   category: "technology",
+};
+
+/**
+ * `viewportFit: cover` lets fixed elements reach the screen edge on notched
+ * phones, which is what makes `env(safe-area-inset-*)` resolve to real values
+ * instead of 0.
+ *
+ * `interactiveWidget: resizes-content` makes the virtual keyboard shrink the
+ * layout viewport, so `dvh` units track the space actually left above the
+ * keyboard. Without it the assistant's composer is pushed underneath it.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  interactiveWidget: "resizes-content",
 };
 
 const personSchema = {

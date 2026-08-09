@@ -49,11 +49,19 @@ export function AssistantWidget() {
     });
   }, [messages, loading]);
 
+  /**
+   * Autofocus opens the virtual keyboard, which on a phone covers most of the
+   * screen before the user has read anything. Only focus where there is room
+   * for a keyboard alongside the panel.
+   */
   useEffect(() => {
-    if (open) inputRef.current?.focus();
+    if (!open) return;
+    if (window.matchMedia("(min-width: 640px)").matches) {
+      inputRef.current?.focus();
+    }
   }, [open]);
 
-  // Close on Escape, and keep focus inside the panel while it's open.
+  // Close on Escape.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -61,6 +69,22 @@ export function AssistantWidget() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
+
+  /**
+   * The panel covers the viewport on phones, so the page behind it must not
+   * scroll underneath. Locking <body> is scoped to the sheet breakpoint; on
+   * larger screens the panel floats and the page stays usable.
+   */
+  useEffect(() => {
+    if (!open) return;
+    const mq = window.matchMedia("(max-width: 639px)");
+    if (!mq.matches) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
   }, [open]);
 
   async function ask(question: string) {
@@ -103,122 +127,150 @@ export function AssistantWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end gap-3 sm:bottom-6 sm:right-6">
+    <>
+      {/* Backdrop, phones only: the panel dominates the screen there, so the
+          page behind it should read as dismissed rather than merely covered.
+          Hidden from assistive tech — tap-to-dismiss is a pointer affordance,
+          and the header's close button plus Escape are the real controls. */}
       {open && (
         <div
-          ref={panelRef}
-          role="dialog"
-          aria-label="Portfolio assistant"
-          className={cn(
-            "flex w-[min(24rem,calc(100vw-2.5rem))] flex-col overflow-hidden rounded-xl border border-border",
-            "bg-popover shadow-xl shadow-black/5 dark:shadow-black/40",
-            "h-[min(30rem,calc(100dvh-8rem))]",
-          )}
-        >
-          <div className="flex items-center justify-between border-b border-border px-4 py-3">
-            <div className="flex items-center gap-2.5">
-              <span aria-hidden className="size-1.5 rounded-full bg-foreground/40" />
-              <span className="text-sm font-medium">Portfolio assistant</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={() => setOpen(false)}
-              aria-label="Close assistant"
-              className="text-muted-foreground"
-            >
-              <X className="size-3.5" />
-            </Button>
-          </div>
+          aria-hidden
+          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-40 bg-black/60 sm:hidden"
+        />
+      )}
 
+      <div
+        className={cn(
+          "fixed z-50 flex flex-col items-end gap-3",
+          // Phones: pin to every edge so the panel can fill the screen.
+          // The safe-area insets keep the composer clear of the home indicator.
+          "inset-x-0 bottom-0 top-auto",
+          "pb-[max(1.25rem,env(safe-area-inset-bottom))]",
+          "pl-[max(1.25rem,env(safe-area-inset-left))]",
+          "pr-[max(1.25rem,env(safe-area-inset-right))]",
+          // Larger screens: back to a corner-anchored floating widget.
+          "sm:inset-auto sm:right-6 sm:bottom-6 sm:p-0",
+        )}
+      >
+        {open && (
           <div
-            ref={scrollRef}
-            className="flex-1 space-y-4 overflow-y-auto px-4 py-4"
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Portfolio assistant"
+            className={cn(
+              "flex w-full flex-col overflow-hidden rounded-xl border border-border",
+              "bg-popover shadow-xl shadow-black/5 dark:shadow-black/40",
+              // dvh (not vh) so the sheet tracks the visible viewport as mobile
+              // browser chrome collapses and the keyboard opens.
+              "h-[min(32rem,calc(100dvh-6.5rem))]",
+              "sm:h-[min(30rem,calc(100dvh-8rem))] sm:w-96",
+            )}
           >
-            {messages.map((msg, i) => (
-              <div
-                key={i}
-                className={cn(
-                  "flex",
-                  msg.role === "user" ? "justify-end" : "justify-start",
-                )}
+            <div className="flex items-center justify-between border-b border-border px-4 py-3">
+              <div className="flex items-center gap-2.5">
+                <span
+                  aria-hidden
+                  className="size-1.5 rounded-full bg-foreground/40"
+                />
+                <span className="text-sm font-medium">Portfolio assistant</span>
+              </div>
+              {/* 44px hit area on touch, tightened back to the compact icon
+                  button once a mouse is likely. */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setOpen(false)}
+                aria-label="Close assistant"
+                className="-mr-1.5 size-11 text-muted-foreground sm:-mr-1 sm:size-7"
               >
-                <p
+                <X className="size-4 sm:size-3.5" />
+              </Button>
+            </div>
+
+            <div
+              ref={scrollRef}
+              className="flex-1 space-y-4 overflow-y-auto overscroll-contain px-4 py-4"
+            >
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
                   className={cn(
-                    "max-w-[85%] text-pretty rounded-lg px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap",
-                    msg.role === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground/85",
+                    "flex",
+                    msg.role === "user" ? "justify-end" : "justify-start",
                   )}
                 >
-                  {msg.text}
-                </p>
-              </div>
-            ))}
+                  <p
+                    className={cn(
+                      "max-w-[85%] text-pretty rounded-lg px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap",
+                      // Long URLs and identifiers would otherwise force the
+                      // bubble wider than the panel on a narrow screen.
+                      "break-words",
+                      msg.role === "user"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-foreground/85",
+                    )}
+                  >
+                    {msg.text}
+                  </p>
+                </div>
+              ))}
 
-            {loading && (
-              <div className="flex justify-start" aria-live="polite">
-                <span className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
-                  Thinking…
-                </span>
-              </div>
-            )}
-          </div>
-
-          {messages.length <= 1 && (
-            <div className="flex flex-wrap gap-1.5 px-4 pb-3">
-              {/* {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => ask(s)}
-                  className="rounded-md border border-border px-2 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  {s}
-                </button>
-              ))} */}
+              {loading && (
+                <div className="flex justify-start" aria-live="polite">
+                  <span className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">
+                    Thinking…
+                  </span>
+                </div>
+              )}
             </div>
-          )}
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              ask(input);
-            }}
-            className="flex items-center gap-2 border-t border-border p-3"
-          >
-            <label htmlFor="assistant-input" className="sr-only">
-              Ask about Caryll&apos;s work
-            </label>
-            <input
-              id="assistant-input"
-              ref={inputRef}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask a question…"
-              autoComplete="off"
-              className="min-w-0 flex-1 bg-transparent px-1 text-sm outline-none placeholder:text-muted-foreground"
-            />
-            <Button
-              type="submit"
-              size="icon-sm"
-              disabled={!input.trim() || loading}
-              aria-label="Send message"
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                ask(input);
+              }}
+              className="flex items-center gap-2 border-t border-border p-3"
             >
-              <ArrowUp className="size-3.5" />
-            </Button>
-          </form>
-        </div>
-      )}
+              <label htmlFor="assistant-input" className="sr-only">
+                Ask about Caryll&apos;s work
+              </label>
+              {/* 16px on mobile: iOS Safari zooms the page in on focus for any
+                  font-size below that, and never zooms back out. */}
+              <input
+                id="assistant-input"
+                ref={inputRef}
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask a question…"
+                autoComplete="off"
+                enterKeyHint="send"
+                className="min-w-0 flex-1 bg-transparent px-1 text-base outline-none placeholder:text-muted-foreground sm:text-sm"
+              />
+              <Button
+                type="submit"
+                size="icon"
+                disabled={!input.trim() || loading}
+                aria-label="Send message"
+                className="size-10 shrink-0 sm:size-7"
+              >
+                <ArrowUp className="size-4 sm:size-3.5" />
+              </Button>
+            </form>
+          </div>
+        )}
 
-      {!open && (
-        <Button
-          onClick={() => setOpen(true)}
-          className="h-10 gap-2 rounded-full px-4 shadow-lg shadow-black/10 dark:shadow-black/40"
-        >
-          <MessageSquare className="size-4" />
-          Ask AI
-        </Button>
-      )}
-    </div>
+        {!open && (
+          <Button
+            onClick={() => setOpen(true)}
+            className="h-11 gap-2 rounded-full px-4 shadow-lg shadow-black/10 sm:h-10 dark:shadow-black/40"
+          >
+            <MessageSquare className="size-4" />
+            Ask AI
+          </Button>
+        )}
+      </div>
+    </>
   );
 }
