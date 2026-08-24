@@ -25,12 +25,7 @@ function Stack({
   );
 }
 
-/**
- * One list row per project — a plain row, not a card and not clickable. The
- * links are the two small buttons on the right: GitHub and, when a live demo
- * exists, Live. Projects with no public repo get no buttons, so the row never
- * points anywhere dead.
- */
+
 export function ProjectRow({ project }: { project: Project }) {
   return (
     <div className="grid items-center gap-x-8 gap-y-2 py-5 lg:grid-cols-[minmax(0,13rem)_minmax(0,1fr)_minmax(0,17rem)_auto]">
