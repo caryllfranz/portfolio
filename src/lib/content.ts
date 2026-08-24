@@ -239,7 +239,7 @@ export const projects: readonly Project[] = [
       "Interactive data visualizations",
     ],
     github: "https://github.com/caryllfranz/data-analyst-agent",
-    demo: "https://data-analyst-agent.vercel.app/",
+    demo: "https://analysis-data-agent.vercel.app//",
   },
 
   {
